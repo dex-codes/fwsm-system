@@ -1,0 +1,193 @@
+import { useState } from 'react';
+import { Filter, Grid, List, MapPin, Clock } from 'lucide-react';
+import CameraCard from '../components/CameraCard';
+
+// Mock data for cameras
+const mockCameras = [
+  {
+    id: 1,
+    name: 'Main Entrance',
+    location: 'Building A - Floor 1',
+    client: 'TechCorp Inc.',
+    status: 'online',
+    lastSeen: '2 minutes ago',
+    thumbnail: 'https://via.placeholder.com/320x180/1e3a5f/ffffff?text=Camera+1'
+  },
+  {
+    id: 2,
+    name: 'Parking Lot North',
+    location: 'Outdoor - North Side',
+    client: 'TechCorp Inc.',
+    status: 'online',
+    lastSeen: '1 minute ago',
+    thumbnail: 'https://via.placeholder.com/320x180/4a90a4/ffffff?text=Camera+2'
+  },
+  {
+    id: 3,
+    name: 'Reception Area',
+    location: 'Building A - Floor 1',
+    client: 'MediCare Center',
+    status: 'offline',
+    lastSeen: '15 minutes ago',
+    thumbnail: ''
+  },
+  {
+    id: 4,
+    name: 'Emergency Exit',
+    location: 'Building B - Floor 2',
+    client: 'TechCorp Inc.',
+    status: 'online',
+    lastSeen: '30 seconds ago',
+    thumbnail: 'https://via.placeholder.com/320x180/1e3a5f/ffffff?text=Camera+4'
+  },
+  {
+    id: 5,
+    name: 'Server Room',
+    location: 'Building A - Basement',
+    client: 'DataFlow Systems',
+    status: 'online',
+    lastSeen: '1 minute ago',
+    thumbnail: 'https://via.placeholder.com/320x180/4a90a4/ffffff?text=Camera+5'
+  },
+  {
+    id: 6,
+    name: 'Loading Dock',
+    location: 'Building C - Ground Floor',
+    client: 'LogiTech Warehouse',
+    status: 'maintenance',
+    lastSeen: '2 hours ago',
+    thumbnail: ''
+  }
+];
+
+const Dashboard = () => {
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState('name');
+  const [filterStatus, setFilterStatus] = useState('all');
+
+  const filteredCameras = mockCameras.filter(camera => {
+    if (filterStatus === 'all') return true;
+    return camera.status === filterStatus;
+  });
+
+  const sortedCameras = [...filteredCameras].sort((a, b) => {
+    switch (sortBy) {
+      case 'name':
+        return a.name.localeCompare(b.name);
+      case 'location':
+        return a.location.localeCompare(b.location);
+      case 'client':
+        return a.client.localeCompare(b.client);
+      case 'status':
+        return a.status.localeCompare(b.status);
+      default:
+        return 0;
+    }
+  });
+
+  return (
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Camera Dashboard</h1>
+          <p className="text-gray-600">Monitor all assigned security cameras</p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <span className="text-sm text-gray-600">
+            {filteredCameras.length} of {mockCameras.length} cameras
+          </span>
+        </div>
+      </div>
+
+      {/* Controls */}
+      <div className="bg-white rounded-lg shadow-sm p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            {/* Filter by Status */}
+            <div className="flex items-center space-x-2">
+              <Filter className="w-4 h-4 text-gray-500" />
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              >
+                <option value="all">All Status</option>
+                <option value="online">Online</option>
+                <option value="offline">Offline</option>
+                <option value="maintenance">Maintenance</option>
+              </select>
+            </div>
+
+            {/* Sort By */}
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-500">Sort by:</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              >
+                <option value="name">Camera Name</option>
+                <option value="location">Location</option>
+                <option value="client">Client</option>
+                <option value="status">Status</option>
+              </select>
+            </div>
+          </div>
+
+          {/* View Mode Toggle */}
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-2 rounded-lg ${
+                viewMode === 'grid'
+                  ? 'bg-primary-100 text-primary-600'
+                  : 'text-gray-500 hover:bg-gray-100'
+              }`}
+            >
+              <Grid className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded-lg ${
+                viewMode === 'list'
+                  ? 'bg-primary-100 text-primary-600'
+                  : 'text-gray-500 hover:bg-gray-100'
+              }`}
+            >
+              <List className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Camera Grid/List */}
+      <div className={
+        viewMode === 'grid'
+          ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
+          : 'space-y-4'
+      }>
+        {sortedCameras.map((camera) => (
+          <CameraCard
+            key={camera.id}
+            camera={camera}
+            viewMode={viewMode}
+          />
+        ))}
+      </div>
+
+      {/* Empty State */}
+      {filteredCameras.length === 0 && (
+        <div className="text-center py-12">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Grid className="w-8 h-8 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">No cameras found</h3>
+          <p className="text-gray-500">Try adjusting your filters to see more cameras.</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Dashboard;
