@@ -1,15 +1,27 @@
 import { useState } from 'react';
-import { Filter, Grid, List, MapPin, Clock } from 'lucide-react';
+import { Filter, Grid, List } from 'lucide-react';
 import CameraCard from '../components/CameraCard';
 
+type CameraStatus = 'online' | 'offline' | 'maintenance';
+
+interface Camera {
+  id: number;
+  name: string;
+  location: string;
+  client: string;
+  status: CameraStatus;
+  lastSeen: string;
+  thumbnail: string;
+}
+
 // Mock data for cameras
-const mockCameras = [
+const mockCameras: Camera[] = [
   {
     id: 1,
     name: 'Main Entrance',
     location: 'Building A - Floor 1',
     client: 'TechCorp Inc.',
-    status: 'online',
+    status: 'online' as const,
     lastSeen: '2 minutes ago',
     thumbnail: 'https://via.placeholder.com/320x180/1e3a5f/ffffff?text=Camera+1'
   },
@@ -18,7 +30,7 @@ const mockCameras = [
     name: 'Parking Lot North',
     location: 'Outdoor - North Side',
     client: 'TechCorp Inc.',
-    status: 'online',
+    status: 'online' as const,
     lastSeen: '1 minute ago',
     thumbnail: 'https://via.placeholder.com/320x180/4a90a4/ffffff?text=Camera+2'
   },
@@ -27,7 +39,7 @@ const mockCameras = [
     name: 'Reception Area',
     location: 'Building A - Floor 1',
     client: 'MediCare Center',
-    status: 'offline',
+    status: 'offline' as const,
     lastSeen: '15 minutes ago',
     thumbnail: ''
   },
@@ -36,7 +48,7 @@ const mockCameras = [
     name: 'Emergency Exit',
     location: 'Building B - Floor 2',
     client: 'TechCorp Inc.',
-    status: 'online',
+    status: 'online' as const,
     lastSeen: '30 seconds ago',
     thumbnail: 'https://via.placeholder.com/320x180/1e3a5f/ffffff?text=Camera+4'
   },
@@ -45,7 +57,7 @@ const mockCameras = [
     name: 'Server Room',
     location: 'Building A - Basement',
     client: 'DataFlow Systems',
-    status: 'online',
+    status: 'online' as const,
     lastSeen: '1 minute ago',
     thumbnail: 'https://via.placeholder.com/320x180/4a90a4/ffffff?text=Camera+5'
   },
@@ -54,7 +66,7 @@ const mockCameras = [
     name: 'Loading Dock',
     location: 'Building C - Ground Floor',
     client: 'LogiTech Warehouse',
-    status: 'maintenance',
+    status: 'maintenance' as const,
     lastSeen: '2 hours ago',
     thumbnail: ''
   }

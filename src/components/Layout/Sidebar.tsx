@@ -8,9 +8,7 @@ import {
   UserCheck,
   AlertTriangle,
   Settings,
-  Shield,
-  ChevronLeft,
-  ChevronRight
+  ChevronLeft
 } from 'lucide-react';
 
 const Sidebar = () => {

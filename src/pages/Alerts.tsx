@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AlertTriangle, CheckCircle, Clock, X, Filter, Bell, Camera, Wifi, WifiOff } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, X, Filter, Bell, Camera, WifiOff } from 'lucide-react';
 
 // Mock data for alerts
 const mockAlerts = [

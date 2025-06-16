@@ -126,7 +126,7 @@ const CameraCard = ({ camera, viewMode }: CameraCardProps) => {
 
         {/* Status Indicator */}
         <div className="absolute top-2 left-2">
-          <div className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(camera.status)}`}>
+          <div className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor()}`}>
             {camera.status}
           </div>
         </div>

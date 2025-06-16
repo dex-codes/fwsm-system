@@ -56,7 +56,6 @@ const mockClients = [
 const Clients = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [showAddModal, setShowAddModal] = useState(false);
 
   const filteredClients = mockClients.filter(client => {
     const matchesSearch = client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -87,7 +86,7 @@ const Clients = () => {
           <p className="text-gray-600">Manage your security service clients</p>
         </div>
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={() => console.log('Add new client')}
           className="btn-primary flex items-center space-x-2"
         >
           <Plus className="w-4 h-4" />
