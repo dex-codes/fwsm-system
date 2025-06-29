@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Filter, Grid, List } from 'lucide-react';
+import { Filter, Grid, List, Shield, Eye, Building, User, Crown } from 'lucide-react';
 import CameraCard from '../components/CameraCard';
+import { usePersona } from '../contexts/PersonaContext';
 
 type CameraStatus = 'online' | 'offline' | 'maintenance';
 
@@ -73,14 +74,78 @@ const mockCameras: Camera[] = [
 ];
 
 const Dashboard = () => {
+  const { personaConfig, currentPersona } = usePersona();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('name');
   const [filterStatus, setFilterStatus] = useState('all');
 
-  const filteredCameras = mockCameras.filter(camera => {
+  // Filter cameras based on persona permissions
+  const getPersonaFilteredCameras = () => {
+    let cameras = mockCameras;
+
+    // Apply persona-specific filtering
+    switch (currentPersona) {
+      case 'security-officer':
+        // Security officers only see cameras assigned to them (mock: first 3 cameras)
+        cameras = cameras.slice(0, 3);
+        break;
+      case 'supervisor':
+        // Supervisors see cameras from stores they supervise (mock: exclude last camera)
+        cameras = cameras.slice(0, -1);
+        break;
+      case 'client':
+        // Clients only see their own store cameras (mock: TechCorp cameras only)
+        cameras = cameras.filter(camera => camera.client === 'TechCorp Inc.');
+        break;
+      case 'admin':
+      case 'super-admin':
+        // Admins see all cameras
+        break;
+    }
+
+    return cameras;
+  };
+
+  const personaFilteredCameras = getPersonaFilteredCameras();
+
+  const filteredCameras = personaFilteredCameras.filter(camera => {
     if (filterStatus === 'all') return true;
     return camera.status === filterStatus;
   });
+
+  const getPersonaSpecificDescription = () => {
+    switch (currentPersona) {
+      case 'security-officer':
+        return 'Monitor your assigned cameras and create incident reports';
+      case 'supervisor':
+        return 'Oversee security operations and review officer activities';
+      case 'client':
+        return 'View your store cameras and security reports';
+      case 'admin':
+        return 'Manage system users and monitor all security operations';
+      case 'super-admin':
+        return 'Full system administration and oversight';
+      default:
+        return 'Monitor security cameras';
+    }
+  };
+
+  const getPersonaAccessInfo = () => {
+    switch (currentPersona) {
+      case 'security-officer':
+        return 'Assigned cameras only';
+      case 'supervisor':
+        return 'Supervised locations';
+      case 'client':
+        return 'Your stores only';
+      case 'admin':
+        return 'All system cameras';
+      case 'super-admin':
+        return 'Full system access';
+      default:
+        return '';
+    }
+  };
 
   const sortedCameras = [...filteredCameras].sort((a, b) => {
     switch (sortBy) {
@@ -102,13 +167,32 @@ const Dashboard = () => {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Camera Dashboard</h1>
-          <p className="text-gray-600">Monitor all assigned security cameras</p>
+          <div className="flex items-center space-x-3 mb-2">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Camera Dashboard</h1>
+            <div className="flex items-center space-x-2 px-3 py-1 bg-primary-100 dark:bg-primary-900 rounded-full">
+              {currentPersona === 'security-officer' && <Shield className="w-4 h-4 text-primary-600 dark:text-primary-400" />}
+              {currentPersona === 'supervisor' && <Eye className="w-4 h-4 text-primary-600 dark:text-primary-400" />}
+              {currentPersona === 'client' && <Building className="w-4 h-4 text-primary-600 dark:text-primary-400" />}
+              {currentPersona === 'admin' && <User className="w-4 h-4 text-primary-600 dark:text-primary-400" />}
+              {currentPersona === 'super-admin' && <Crown className="w-4 h-4 text-primary-600 dark:text-primary-400" />}
+              <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
+                {personaConfig.shortName}
+              </span>
+            </div>
+          </div>
+          <p className="text-gray-600 dark:text-gray-400">
+            {getPersonaSpecificDescription()}
+          </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-600">
-            {filteredCameras.length} of {mockCameras.length} cameras
-          </span>
+        <div className="flex items-center space-x-4">
+          <div className="text-right">
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              {filteredCameras.length} of {personaFilteredCameras.length} cameras
+            </div>
+            <div className="text-xs text-gray-500 dark:text-gray-500">
+              {getPersonaAccessInfo()}
+            </div>
+          </div>
         </div>
       </div>
 

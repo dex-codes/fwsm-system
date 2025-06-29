@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Bell, Search, Menu, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
+import PersonaSelector from '../PersonaSelector';
 
 const Header = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
@@ -32,8 +33,11 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Right side - Notifications and Status */}
+        {/* Right side - Persona, Notifications and Status */}
         <div className="flex items-center space-x-4">
+          {/* Persona Selector */}
+          <PersonaSelector />
+
           {/* System Status */}
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>

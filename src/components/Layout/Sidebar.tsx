@@ -10,10 +10,12 @@ import {
   Settings,
   ChevronLeft
 } from 'lucide-react';
+import { usePersona } from '../../contexts/PersonaContext';
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { canAccessRoute, personaConfig } = usePersona();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -73,6 +75,9 @@ const Sidebar = () => {
               }`}>
                 <h1 className="text-xl font-bold text-primary-600 dark:text-primary-400 whitespace-nowrap">ReSurve</h1>
                 <p className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">Security Monitoring</p>
+                <div className="mt-1 px-2 py-1 bg-primary-100 dark:bg-primary-900 rounded text-xs text-primary-700 dark:text-primary-300 whitespace-nowrap">
+                  {personaConfig.shortName}
+                </div>
               </div>
             </div>
             {!isCollapsed && (
@@ -101,7 +106,9 @@ const Sidebar = () => {
       {/* Navigation Menu */}
       <nav className="flex-1 py-4">
         <ul className="space-y-1">
-          {menuItems.map((item) => {
+          {menuItems
+            .filter(item => canAccessRoute(item.path))
+            .map((item) => {
             const Icon = item.icon;
             return (
               <li key={item.path}>
